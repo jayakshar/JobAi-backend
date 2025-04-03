@@ -1,0 +1,31 @@
+const express = require("express");
+const http = require('http');
+const app = express();
+require('dotenv').config();
+const cors = require("cors");
+app.use(cors({ origin: "*" }));
+
+
+app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome to JOB AI API." });
+
+});
+
+
+// routes
+const apiRouter = express.Router(); // Create a router for API routes
+
+require("./app/routes/user.routes")(apiRouter);
+
+
+app.use("/api", apiRouter); // Mount the API router under the /api prefix
+
+
+// set port, listen for requests
+const PORT = process.env.PORT || 5005;
+const server = http.createServer(app);
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+});
