@@ -12,13 +12,19 @@ verifyToken = async (req, res, next) => {
       message: "No token provided!",
     });
   }
-  jwt.verify(token.split(" ")[1], config.secret, async (err, decoded) => {
+  jwt.verify(token.split(" ")[1], process.env.JWT_SECRET, async (err, decoded) => {
     if (err) {
       return res.status(401).send({
         message: "Unauthorized!",
       });
     }
-
+    const user = await User.findOne({
+      where: { id: decoded.id }
+    });
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+    req.user = user;
 
     next();
   });
