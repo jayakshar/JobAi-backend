@@ -14,10 +14,19 @@ app.get("/", (req, res) => {
 });
 
 
+// Admin Routes
+const adminRoute = express.Router();
+
+require("./app/routes/admin/adminAuth.routes")(adminRoute);
+require("./app/routes/admin/subscription.routes")(adminRoute);
+
+app.use("/api/admin", adminRoute);
+
 // routes
 const apiRouter = express.Router(); // Create a router for API routes
 
 require("./app/routes/user.routes")(apiRouter);
+require("./app/routes/screeningQustion.routes")(apiRouter);
 
 
 app.use("/api", apiRouter); // Mount the API router under the /api prefix

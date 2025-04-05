@@ -16,5 +16,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
+db.screeningsQuestion = require("./screeningQustion.model.js")(sequelize, Sequelize);
+db.subscription = require("../models/subscription.model.js")(sequelize, Sequelize);
 
 module.exports = { db, mdb };
