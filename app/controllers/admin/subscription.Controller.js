@@ -25,7 +25,7 @@ exports.addSubscription = async (req, res) => {
         });
     } catch (error) {
         console.error("Add subscription error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ status: 500, message: "Internal server error", data : {} });
     }
 };
 
@@ -60,7 +60,48 @@ exports.subscriptionList = async (req, res) => {
         console.error("List Subscription error:", error);
         return res.status(500).json({
             status: 500,
-            message: "Internal server error"
+            message: "Internal server error",
+            data : {}
+        });
+    }
+};
+
+exports.subscriptionDetail = async (req, res) => {
+    try {
+        const userId = req.user?.id || '';
+        const subscriptionId = req.params.id || '';
+        console.log("user id",userId);
+        console.log("subscription id",subscriptionId);
+        if (!userId) {
+            return res.status(400).json({
+                status: 400,
+                message: "Admin ID is required."
+            });
+        }
+        if (!subscriptionId) {
+            return res.status(400).json({
+                status: 400,
+                message: "Subscription ID is required."
+            });
+        }  
+        const subscription = await Subscription.findByPk(subscriptionId);
+        if (!subscription) {
+            return res.status(404).json({
+                status: 404,
+                message: "Subscription not found."
+            });
+        }
+        return res.status(200).json({
+            status: 200,
+            message: "Subscription detail retrieved successfully.",
+            data: subscription
+        });
+    } catch (error) {
+        console.error("Subscription detail error:", error);
+        return res.status(500).json({
+            status: 500,
+            message: "Internal server error",
+            data : {}
         });
     }
 };
@@ -115,7 +156,8 @@ exports.editSubscription = async (req, res) => {
         console.error("Edit Subscription Error:", error);
         return res.status(500).json({
             status: 500,
-            message: "Internal server error"
+            message: "Internal server error",
+            data: {}
         });
     }
 };
@@ -165,10 +207,11 @@ exports.deleteSubscription = async (req, res) => {
         console.error("Delete Subscription Error:", error);
         return res.status(500).json({
             status: 500,
-            message: "Internal server error"
+            message: "Internal server error",
+            data: {}
         });
     }
-}
+};
 
 // Destroy data from database
 // exports.deleteSubscription = async (req, res) => {

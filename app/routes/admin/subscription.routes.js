@@ -12,6 +12,7 @@ module.exports = function (app) {
 
     app.post('/create_Subscription', verifyAuthToken,subscription.addSubscription);
     app.get('/getAll_Subscription',verifyAuthToken, subscription.subscriptionList);
+    app.get('/getSubscription/:id',verifyAuthToken, subscription.subscriptionDetail);
     app.put('/edit_Subscription/:id',verifyAuthToken,subscription.editSubscription);
     app.delete('/delete_Subscription/:id',verifyAuthToken, subscription.deleteSubscription);
 

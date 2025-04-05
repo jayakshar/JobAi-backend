@@ -81,7 +81,7 @@ exports.updateScreeningQustion = async (req, res) => {
             });
         };
 
-        const screeningQuestion = await ScreeningQustions.findOne({
+        const screeningQuestion = await ScreeningQuestion.findOne({
             where:{ user_id: userId }
         });
 
@@ -110,4 +110,4 @@ exports.updateScreeningQustion = async (req, res) => {
         console.error('Screening Questions update error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

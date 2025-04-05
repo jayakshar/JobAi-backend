@@ -1,4 +1,5 @@
 const auth = require("../../controllers/admin/adminAuth.Controller");
+const { verifyAuthToken } = require("../../middleware/authJwt");
 
 module.exports = function (app) {
     app.use(function (req, res, next) {
@@ -11,5 +12,5 @@ module.exports = function (app) {
 
     app.post("/admin-register", auth.adminRegister);
     app.post("/admin-login", auth.adminLogin);
-
+    app.put("/change-password", verifyAuthToken, auth.changePassword);
 }    
