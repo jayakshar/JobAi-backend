@@ -41,7 +41,7 @@ exports.screeningQustion = async (req, res) => {
         return res.status(200).json({
             status: 200,
             message: "Screening questions fetched successfully.",
-            data:screeningsQuestion
+            data: screeningsQuestion
         });
     } catch (error) {
         console.error('Screening Questions error:', error);
@@ -56,22 +56,24 @@ exports.screeningQustion = async (req, res) => {
 exports.updateScreeningQustion = async (req, res) => {
     try {
         const userId = req.user?.id || '';
-
-        const { 
+        console.log("userId",userId);
+        const {
             title,
-            linkedin_url,
+            indeed_url,
             working_for_canada,
             notice_period,
             expected_salary
-         } = req.body;
-         
-        console.log("Fetching screening questions for userId:", userId);
+        } = req.body;
+
+        console.log("Updating screening questions for userId:", userId);
+        console.log("Payload received:", req.body);
+
         if (!userId) {
-             return res.status(400).json({
+            return res.status(400).json({
                 status: 400,
                 message: "User ID is required."
             });
-        };
+        }
 
         const user = await User.findByPk(userId);
         if (!user) {
@@ -79,10 +81,10 @@ exports.updateScreeningQustion = async (req, res) => {
                 status: 404,
                 message: "User not found."
             });
-        };
+        }
 
-        const screeningQuestion = await ScreeningQustions.findOne({
-            where:{ user_id: userId }
+        const screeningQuestion = await ScreeningQuestion.findOne({
+            where: { user_id: userId }
         });
 
         if (!screeningQuestion) {
@@ -90,17 +92,17 @@ exports.updateScreeningQustion = async (req, res) => {
                 status: 404,
                 message: "No screening questions found for this user."
             });
-        };
+        }
 
         await screeningQuestion.update({
             title,
-            linkedin_url,
+            indeed_url,
             working_for_canada,
             notice_period,
             expected_salary,
             updated_at: new Date()
         });
-        
+        // save code add bro
         return res.status(200).json({
             status: 200,
             message: "Screening question updated successfully.",
@@ -110,4 +112,4 @@ exports.updateScreeningQustion = async (req, res) => {
         console.error('Screening Questions update error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

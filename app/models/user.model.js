@@ -4,13 +4,16 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
         },
         last_name: {
-            type: Sequelize.STRING,  
+            type: Sequelize.STRING,
         },
         email: {
             type: Sequelize.STRING,
             unique: true,
         },
         mobile: {
+            type: Sequelize.STRING,
+        },
+        photo_url: {
             type: Sequelize.STRING,
         },
         email_verified_at: {

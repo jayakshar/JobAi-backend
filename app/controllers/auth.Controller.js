@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 exports.login = async (req, res) => {
     console.log("Incoming Request Body:", req.body); // ✅ Log incoming request
 
-    const { email, password, googleId, facebookId, photoUrl, first_name, last_name, mobile, login_type } = req.body;
+    const { email, password, googleId, facebookId, photo_url, first_name, last_name, mobile, login_type } = req.body;
 
     if (!email) {
         return res.status(400).json({ status: 400, message: "Email is required", data: {} });
@@ -27,7 +27,7 @@ exports.login = async (req, res) => {
                 user = await User.create({
                     google_id: googleId,
                     email,
-                    photo_url: photoUrl,
+                    photo_url: photo_url,
                     signup_by: "google",
                     last_login_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     first_name: first_name || null,
@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
                 user = await User.create({
                     facebook_id: facebookId,
                     email,
-                    photo_url: photoUrl,
+                    photo_url: photo_url,
                     signup_by: "facebook",
                     last_login_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     first_name: first_name || null,
@@ -179,7 +179,7 @@ exports.register = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
     const userId = req.user?.id || '';
-    // console.log("userId", userId);
+    console.log("userId", userId);
     if (!userId) {
         return res.status(400).json({ status: 400, message: "User ID is required.", data: {} });
     }
@@ -215,14 +215,31 @@ exports.updateProfile = async (req, res) => {
             return res.status(404).json({ status: 404, message: "User not found.", data: {} });
         }
 
-        const { first_name, last_name, mobile, photo_url } = req.body;
+        const {
+            first_name,
+            last_name,
+            mobile,
+            email,
+            website,
+            qualification,
+            address,
+            description,
+            photo_url
+        } = req.body;
 
         await user.update({
             first_name: first_name || user.first_name,
             last_name: last_name || user.last_name,
             mobile: mobile || user.mobile,
+            email: email || user.email,
+            website: website || user.website,
+            qualification: qualification || user.qualification,
+            address: address || user.address,
+            description: description || user.description,
             photo_url: photo_url || user.photo_url,
         });
+
+        console.log("Payload received:", req.body);
         return res.status(200).json({
             status: 200,
             message: "Profile updated successfully.",

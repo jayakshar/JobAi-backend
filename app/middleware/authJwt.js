@@ -8,9 +8,7 @@ verifyToken = async (req, res, next) => {
     req.headers["Authorization"] ||
     req.headers["authorization"];
   if (!token) {
-    return res.status(403).send({
-      message: "No token provided!",
-    });
+    return res.status(403).send({ status: 403, message: "No token provided!", data: {}});
   }
   jwt.verify(token.split(" ")[1], process.env.JWT_SECRET, async (err, decoded) => {
     if (err) {
