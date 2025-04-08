@@ -1,5 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
     const Email = sequelize.define('emails', {
+      user_id: {
+        type: Sequelize.BIGINT.UNSIGNED,
+        allowNull: false,
+      },
       title: {
         type: Sequelize.STRING
       },

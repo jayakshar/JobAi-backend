@@ -13,5 +13,6 @@ module.exports = function (app) {
     app.post("/create-emailTemplate", verifyAuthToken, emailTemplate.createEmailTemplate);
     app.put("/edit-emailTemplate/:id", verifyAuthToken, emailTemplate.updateEmailTemplate);
     app.get("/get-all-emailTemplate", verifyAuthToken, emailTemplate.getEmailTemplateList);
+    app.get("/get-emailTemplate/:id", verifyAuthToken, emailTemplate.getOneEmailTemplate);
     app.delete("/delete-emailTemplate/:id", verifyAuthToken, emailTemplate.deleteEmailTemplate);
 } 
