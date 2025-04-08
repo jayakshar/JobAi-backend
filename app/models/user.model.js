@@ -25,6 +25,9 @@ module.exports = (sequelize, Sequelize) => {
         remember_token: {
             type: Sequelize.STRING,
         },
+        cv_path: {
+            type: Sequelize.STRING,
+        },        
         google_id: {
             type: Sequelize.STRING,
         },

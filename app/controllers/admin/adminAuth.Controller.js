@@ -66,7 +66,7 @@ exports.adminLogin = async (req, res) => {
         });
     } catch (error) {
         console.error("Admin login error:", error);
-        return res.status(500).json({ status: 500, error: "Internal server error" });
+        return res.status(500).json({ status: 500, message: "Internal server error", data : {} });
     }
 };
 
@@ -109,6 +109,37 @@ exports.adminRegister = async (req, res) => {
         });
     } catch (error) {
         console.error("Admin registration error:", error);
-        return res.status(500).json({ status: 500, error: "Registration failed" });
+        return res.status(500).json({ status: 500, message: "Registration failed" , data : {}});
     }
-}
+};
+
+exports.changePassword = async (req, res) => {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.user?.id || '';
+    console.log("user id", userId);
+    if (!userId) {
+        return res.status(400).json({ status: 400, error: "Admin ID is required." });
+    }
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ status: 400, error: "All fields are required" });
+    }
+    try {
+        let comparePassword = await bcrypt.compare(oldPassword, req.user.password);
+        if (!comparePassword) {
+            return res.status(400).json({ status: 400, error: "Old password is incorrect" });
+        }
+        if (newPassword === oldPassword) {
+            return res.status(400).json({ status: 400, error: "New password cannot be the same as old password" });
+            
+        }
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ status: 400, error: "New passwords do not match" });
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await User.update({ password: hashedPassword }, { where: { id: userId } });
+        return res.status(200).json({ status: 200, message: "Password changed successfully" });
+    } catch (error) {
+        console.error("Change password error:", error);
+        return res.status(500).json({ status: 500, message: "Internal server error" , data : {}});
+    }   
+};
