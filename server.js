@@ -29,6 +29,7 @@ const apiRouter = express.Router(); // Create a router for API routes
 require("./app/routes/user.routes")(apiRouter);
 require("./app/routes/screeningQustion.routes")(apiRouter);
 require("./app/routes/jobLoops.routes")(apiRouter);
+require("./app/routes/loopEmail.routes")(apiRouter);
 
 
 app.use("/api", apiRouter); // Mount the API router under the /api prefix

@@ -1,9 +1,5 @@
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET;
 const { db } = require("../models");
-const { where } = require("sequelize");
 const User = db.user;
-// const ScreeningQustions = db.screeningQustions;
 const ScreeningQuestion = db.screeningsQuestion;
 
 

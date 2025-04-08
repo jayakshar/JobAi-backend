@@ -20,5 +20,7 @@ db.screeningsQuestion = require("./screeningQustion.model.js")(sequelize, Sequel
 db.subscription = require("../models/subscription.model.js")(sequelize, Sequelize);
 db.jobLoop = require("../models/jobLoops.model.js")(sequelize, Sequelize);
 db.emailTemplate = require("../models/emailTemplate.model.js")(sequelize, Sequelize);
+db.loopEmail = require("../models/loopEmail.model.js")(sequelize, Sequelize);
+db.loopSettings = require("../models/loopSetting.model.js")(sequelize, Sequelize);
 
 module.exports = { db, mdb };

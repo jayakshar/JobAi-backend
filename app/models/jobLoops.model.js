@@ -38,7 +38,9 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: Sequelize.NOW,
       },
     }, {
-      timestamps: true
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     });
   
     return JobLoop;
