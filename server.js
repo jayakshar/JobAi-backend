@@ -35,11 +35,10 @@ require("./app/routes/loopEmail.routes")(apiRouter);
 require("./app/routes/loopSetting.routes")(apiRouter);
 require("./app/routes/cvScanner.routes")(apiRouter);
 
-
 app.use("/api", apiRouter); // Mount the API router under the /api prefix
 
 
-// set port, listen for requests
+// set port, listen for requests    
 const PORT = process.env.PORT || 5005;
 const server = http.createServer(app);
 server.listen(PORT, () => {

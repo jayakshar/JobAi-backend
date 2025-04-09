@@ -4,13 +4,16 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
         },
         last_name: {
-            type: Sequelize.STRING,  
+            type: Sequelize.STRING,
         },
         email: {
             type: Sequelize.STRING,
             unique: true,
         },
         mobile: {
+            type: Sequelize.STRING,
+        },
+        photo_url: {
             type: Sequelize.STRING,
         },
         email_verified_at: {
@@ -22,6 +25,9 @@ module.exports = (sequelize, Sequelize) => {
         remember_token: {
             type: Sequelize.STRING,
         },
+        cv_path: {
+            type: Sequelize.STRING,
+        },        
         google_id: {
             type: Sequelize.STRING,
         },

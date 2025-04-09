@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
     }, {
       timestamps: true,
       createdAt: 'created_at',
-      updatedAt: 'updated_at',
+      updatedAt : 'updated_at'
     });
   
     return JobLoop;

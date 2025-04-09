@@ -6,6 +6,36 @@ const User = db.user;
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+
+exports.getAdminProfile = async (req, res) => {
+    const userId = req.user?.id || '';
+    console.log("userId", userId);
+
+    if (!userId) {
+        return res.status(400).json({ status: 400, message: "User ID is required.", data: {} });
+    }
+    try {
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ status: 404, message: "User not found", data: {} });
+        }
+        if (user.role !== 'admin') {
+            return res.status(403).json({ status: 403, message: "Access denied. Admin only.", data: {} });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: "Admin profile retrieved successfully",
+            data: user,
+        });
+
+    } catch (error) {
+        console.error('Profile retrieval error:', error);
+        return res.status(500).json({ status: 500, message: "Internal server error.", data: {} });
+    }
+};
+
 exports.adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
@@ -13,7 +43,7 @@ exports.adminLogin = async (req, res) => {
         return res.status(400).json({ status: 400, error: "Email and password are required" });
     }
     try {
-        const adminUser = await User.findOne({ where:{ email}});
+        const adminUser = await User.findOne({ where: { email } });
 
         if (!adminUser) {
             return res.status(404).json({ status: 404, error: "Admin not found" });

@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         title: {
             type: Sequelize.STRING,
         },
-        linkedin_url: {
+        indeed_url: {
             type: Sequelize.STRING,
         },
         working_for_canada: {
