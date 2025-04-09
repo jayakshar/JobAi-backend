@@ -8,7 +8,7 @@ const mdb = {};
 mdb.mongoose = mongoose;
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     host: config.HOST,
-    dialect: config.dialect,
+    dialect: config.dialect,    
     operatorsAliases: false,
 });
 const db = {};
@@ -22,5 +22,16 @@ db.jobLoop = require("../models/jobLoops.model.js")(sequelize, Sequelize);
 db.emailTemplate = require("../models/emailTemplate.model.js")(sequelize, Sequelize);
 db.loopEmail = require("../models/loopEmail.model.js")(sequelize, Sequelize);
 db.loopSettings = require("../models/loopSetting.model.js")(sequelize, Sequelize);
+db.cvScanner = require("../models/cv_Scanners.model.js")(sequelize, Sequelize);
+
+db.user.hasMany(db.jobLoop, {
+    foreignKey: "user_id",
+    as: "jobLoops",
+  });
+  
+  db.jobLoop.belongsTo(db.user, {
+    foreignKey: "user_id",
+    as: "candidate",
+  });
 
 module.exports = { db, mdb };

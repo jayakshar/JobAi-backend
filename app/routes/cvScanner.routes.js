@@ -1,5 +1,6 @@
-const loopSetting = require("../controllers/loopSetting.Controller");
+const cvScanner = require("../controllers/cvScanner.Controller");
 const { verifyAuthToken } = require("../middleware/authJwt");
+const upload = require("../middleware/upload");
 
 module.exports = function (app) {
     app.use(function (req, res, next) {
@@ -10,5 +11,5 @@ module.exports = function (app) {
         next();
       });
 
-      app.post('/loop-settings/:id', verifyAuthToken, loopSetting.createLoopSetting);
+      app.post('/cv-scanner', upload.single('cv'), verifyAuthToken, cvScanner.cvScanner)
 }

@@ -20,6 +20,8 @@ const adminRoute = express.Router();
 require("./app/routes/admin/adminAuth.routes")(adminRoute);
 require("./app/routes/admin/subscription.routes")(adminRoute);
 require("./app/routes/admin/emailTemplate.routes")(adminRoute);
+require("./app/routes/admin/candidate.routes")(adminRoute);
+require("./app/routes/admin/candidateJobLoop.routes")(adminRoute);
 
 app.use("/api/admin", adminRoute);
 
@@ -30,6 +32,8 @@ require("./app/routes/user.routes")(apiRouter);
 require("./app/routes/screeningQustion.routes")(apiRouter);
 require("./app/routes/jobLoops.routes")(apiRouter);
 require("./app/routes/loopEmail.routes")(apiRouter);
+require("./app/routes/loopSetting.routes")(apiRouter);
+require("./app/routes/cvScanner.routes")(apiRouter);
 
 
 app.use("/api", apiRouter); // Mount the API router under the /api prefix

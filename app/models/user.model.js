@@ -38,6 +38,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.BOOLEAN,
             defaultValue: false,
         },
+        role: {
+            type: Sequelize.STRING,
+            defaultValue: 'candidate', // 👈 Default role
+        },
         status: {
             type: Sequelize.INTEGER,
             defaultValue: 1,
