@@ -11,5 +11,7 @@ module.exports = function (app) {
       });
 
       app.get("/candidate-list", verifyAuthToken, candidate.candidateList);
+      app.get("/candidate-detail/:id", verifyAuthToken, candidate.candidateDetail);
       app.put("/candidate-status-update/:id", verifyAuthToken, candidate.candidateStatusUpdate);
+      app.put("/update-candidate/:id", verifyAuthToken, candidate.updateCandidate);
 };

@@ -101,3 +101,126 @@ exports.candidateStatusUpdate = async (req, res) => {
     }
 };
 
+exports.candidateDetail = async (req, res) => {
+    try {
+        const adminId = req.user?.id || '';
+        const candidateId = req.params.id || '';
+
+        console.log("Admin Id", adminId);
+        console.log("Candidate Id", candidateId);
+
+        if (!adminId) {
+            return res.status(401).json({
+                status: 401,
+                message: "Unauthorized: Admin not found",
+                data: {}
+            });
+        }
+        if (!candidateId) {
+            return res.status(400).json({
+                status: 400,
+                message: "Candidate Id required",
+                data: {}
+            });
+        }
+
+        const candidate = await User.findByPk(candidateId);
+        if(!candidate){
+            return res.status(404).json({
+                status: 404,
+                message: "Candidate not found",
+                data:{}
+            });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: "Candidate detail",
+            data : candidate
+        })
+    } catch (error) {
+        console.error("Candidate detail error:", error);
+        res.status(500).json({status: 500, message: "Internal server error", data: {}});
+    }
+}
+exports.updateCandidate = async (req, res) => {
+    try {
+        const adminId = req.user?.id || '';
+        const candidateId = req.params.id || '';
+
+        console.log("Admin Id", adminId);
+        console.log("Candidate Id", candidateId);
+        console.log("Request Body:", JSON.stringify(req.body, null, 2));
+        
+        if (!adminId) {
+            return res.status(401).json({
+                status: 401,
+                message: "Unauthorized: Admin not found",
+                data: {}
+            });
+        }
+        if (!candidateId) {
+            return res.status(400).json({
+                status: 400,
+                message: "Candidate Id required",
+                data: {}
+            });
+        }
+
+        const candidate = await User.findByPk(candidateId);
+        if (!candidate) {
+            return res.status(404).json({ 
+                status: 404, 
+                message: "Candidate not found.", 
+                data: {} 
+            });
+        }
+         
+        const {
+            first_name,
+            last_name,
+            mobile,
+            email,
+            website,
+            qualification,
+            address,
+            description,
+            photo_url
+        } = req.body;
+
+        await candidate.update({
+            ...(first_name && { first_name }),
+            ...(last_name && { last_name }),
+            ...(mobile && { mobile }),
+            ...(email && { email }),
+            ...(website && { website }),
+            ...(qualification && { qualification }),
+            ...(address && { address }),
+            ...(description && { description }),
+            ...(photo_url && { photo_url })
+        });
+
+        const updatedData = {
+            id: candidate.id,
+            first_name: candidate.first_name,
+            last_name: candidate.last_name,
+            mobile: candidate.mobile,
+            email: candidate.email,
+            website: candidate.website,
+            qualification: candidate.qualification,
+            address: candidate.address,
+            description: candidate.description,
+            photo_url: candidate.photo_url
+        }
+        console.log("Payload recevied: ", req.body);
+        
+        return res.status(200).json({
+            status: 200,
+            message: "Profile updated successfully",
+            data : updatedData
+        });
+    } catch (error) {
+        console.error('Candidate Profile update error: ', error);
+        return res.status(500).json({status: 500, message: "Internal server error.", data: {}});
+    }
+}; 

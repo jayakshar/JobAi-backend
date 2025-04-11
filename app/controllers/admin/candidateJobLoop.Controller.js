@@ -22,12 +22,12 @@ exports.candidateJobLoop = async (req, res) => {
                     model : User,
                     as: 'candidate',
                     attributes : ['id', 'first_name', 'last_name', 'email'],
-                    where : {
-                        role : 'candidate'
-                    },
                     // attributes : {
                     //     exclude : [ "created_at", "updated_at", "password"]
                     // },
+                    where : {
+                        role : 'candidate'
+                    },
                 }
             ],
             order : [['created_at', 'DESC']]
@@ -77,18 +77,18 @@ exports.loopDetail = async (req, res) => {
         }
         
         const loopDetail = await JobLoop.findOne({
+            where : {
+                id: jobLoopId,
+                user_id : candidateId
+            },
             include: [
                 {
-                    where : {
-                        id: jobLoopId,
-                        user_id : candidateId
-                    },
                     model : User,
                     as: 'candidate',
                     attributes : ['id', 'first_name', 'last_name', 'email'],
-                    attributes : {
-                        exclude : [ "created_at", "updated_at", "password"]
-                    },
+                    // attributes : {
+                    //     exclude : [ "created_at", "updated_at", "password"]
+                    // },
                 }
             ]
         });
@@ -110,4 +110,4 @@ exports.loopDetail = async (req, res) => {
         console.error("Loop detail error : ", error);
         return res.status(500).json({status : 500, message : "Internal server error", data : {}});
     }
-}
+};
