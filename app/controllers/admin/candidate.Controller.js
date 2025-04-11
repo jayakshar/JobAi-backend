@@ -101,10 +101,3 @@ exports.candidateStatusUpdate = async (req, res) => {
     }
 };
 
-// exports.updateCandidate = async (req, res) => {
-//     try {
-        
-//     } catch (error) {
-        
-//     }
-// }

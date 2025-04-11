@@ -11,7 +11,7 @@ const loopEmial = require('../controllers/loopEmail.Controller');
        });
  
      app.post('/loop-emails/:loop_id/:email_id', verifyAuthToken, loopEmial.createLoopEmail);
-     app.post('/addLoopEmail', verifyAuthToken, loopEmial.createOwnEmailTemaplte);
+     app.post('/addLoopEmail', verifyAuthToken, loopEmial.createOwnEmailTemaplte);//
      app.get('/getLoopEmail/:id', verifyAuthToken, loopEmial.getOneEmailTemplate);  
      app.get('/getAllLoopEmail', verifyAuthToken, loopEmial.getEmailTemplateList);
  }

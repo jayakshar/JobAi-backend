@@ -10,7 +10,8 @@ module.exports = function (app) {
       next();
     });
 
-    app.post("/addJobLoop", verifyAuthToken, jobLoop.addJobLoop);
+    // app.post("/addJobLoop", verifyAuthToken, jobLoop.addJobLoop);
+    app.post("/addJobLoop", verifyAuthToken, jobLoop.createJobLoopWithSettingsAndTemplate);
     app.get("/getAllJobLoop", verifyAuthToken, jobLoop.jobLoopList);
     app.get("/getJobLoop/:id", verifyAuthToken, jobLoop.jobLoopDetail);
 }    

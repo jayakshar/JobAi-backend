@@ -40,9 +40,7 @@ exports.subscriptionList = async (req, res) => {
             });
         }
         const subscriptions = await Subscription.findAll({
-            where: {
-                status: 'active'
-            },
+            
             // order: [['created_at', 'DESC']]
         });
         if (!subscriptions || subscriptions.length === 0) {

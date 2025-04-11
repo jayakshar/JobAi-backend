@@ -6,21 +6,23 @@ const User = db.user;
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-
 exports.getAdminProfile = async (req, res) => {
-    const userId = req.user?.id || '';
-    console.log("userId", userId);
+    const userId = req.user?.id;
+    console.log('userId', userId)
 
     if (!userId) {
         return res.status(400).json({ status: 400, message: "User ID is required.", data: {} });
     }
+
     try {
         const user = await User.findByPk(userId);
 
         if (!user) {
             return res.status(404).json({ status: 404, message: "User not found", data: {} });
         }
-        if (user.role !== 'admin') {
+
+        // ✅ Only admin allowed
+        if (user.role !== "admin") {
             return res.status(403).json({ status: 403, message: "Access denied. Admin only.", data: {} });
         }
 
@@ -42,11 +44,16 @@ exports.adminLogin = async (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ status: 400, error: "Email and password are required" });
     }
+
     try {
         const adminUser = await User.findOne({ where: { email } });
 
         if (!adminUser) {
             return res.status(404).json({ status: 404, error: "Admin not found" });
+        }
+
+        if (adminUser.role !== "admin") {
+            return res.status(403).json({ status: 403, error: "Access denied. Not an admin user." });
         }
 
         const isMatch = await bcrypt.compare(password, adminUser.password);
@@ -66,7 +73,7 @@ exports.adminLogin = async (req, res) => {
         });
     } catch (error) {
         console.error("Admin login error:", error);
-        return res.status(500).json({ status: 500, message: "Internal server error", data : {} });
+        return res.status(500).json({ status: 500, message: "Internal server error", data: {} });
     }
 };
 
@@ -109,7 +116,7 @@ exports.adminRegister = async (req, res) => {
         });
     } catch (error) {
         console.error("Admin registration error:", error);
-        return res.status(500).json({ status: 500, message: "Registration failed" , data : {}});
+        return res.status(500).json({ status: 500, message: "Registration failed", data: {} });
     }
 };
 
@@ -130,7 +137,7 @@ exports.changePassword = async (req, res) => {
         }
         if (newPassword === oldPassword) {
             return res.status(400).json({ status: 400, error: "New password cannot be the same as old password" });
-            
+
         }
         if (newPassword !== confirmPassword) {
             return res.status(400).json({ status: 400, error: "New passwords do not match" });
@@ -140,6 +147,6 @@ exports.changePassword = async (req, res) => {
         return res.status(200).json({ status: 200, message: "Password changed successfully" });
     } catch (error) {
         console.error("Change password error:", error);
-        return res.status(500).json({ status: 500, message: "Internal server error" , data : {}});
-    }   
+        return res.status(500).json({ status: 500, message: "Internal server error", data: {} });
+    }
 };

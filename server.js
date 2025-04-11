@@ -6,7 +6,10 @@ const cors = require("cors");
 app.use(cors({ origin: "*" }));
 
 
-app.use(express.json());
+// app.use(express.json());
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
 
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to JOB AI API." });

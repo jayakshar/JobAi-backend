@@ -12,5 +12,5 @@ module.exports = function (app) {
 
   app.post("/admin-register", auth.adminRegister);
   app.post("/admin-login", auth.adminLogin);
-  app.get("/employer-profile", verifyAuthToken, auth.getAdminProfile);
+  app.get("/admin-profile", verifyAuthToken, auth.getAdminProfile);
 }    
