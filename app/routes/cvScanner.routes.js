@@ -11,5 +11,6 @@ module.exports = function (app) {
         next();
       });
 
-      app.post('/cv-scanner', upload.single('cv'), verifyAuthToken, cvScanner.cvScanner)
+      app.post('/cv-scanner', upload.single('cv'), verifyAuthToken, cvScanner.cvScanner);
+      app.post('/cv-scanners', upload.single('cv'), verifyAuthToken, cvScanner.cvScanners);
 }
