@@ -2,7 +2,6 @@ module.exports = (sequelize, Sequelize) => {
     const Email = sequelize.define('emails', {
       user_id: {
         type: Sequelize.BIGINT.UNSIGNED,
-        allowNull: false,
       },
       title: {
         type: Sequelize.STRING
@@ -14,8 +13,8 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.TEXT
       },
       status: {
-        type: Sequelize.ENUM('draft', 'sent', 'failed'),
-        defaultValue: 'draft'
+        type: Sequelize.ENUM('active', 'inactive'),
+        defaultValue: ''
       },
       created_at: {
         type: Sequelize.DATE,
