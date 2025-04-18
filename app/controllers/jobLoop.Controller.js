@@ -240,73 +240,77 @@ exports.jobLoopDetail = async (req, res) => {
 //     return cleanedText;
 // };
 
-function parseCVSections(text) {
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line !== '');
-    const data = {};
-    let currentLabel = null;
-  
-    const knownLabels = ['Education', 'Skills', 'Experience', 'Certifications', 'Languages'];
-  
-    for (const line of lines) {
-      if (knownLabels.includes(line)) {
-        currentLabel = line.toLowerCase();
-        data[currentLabel] = [];
-      } else if (currentLabel) {
-        data[currentLabel].push(line);
-      }
-    }
-  
-    return {
-      education: data.education?.join(', ') || null,
-      skills: data.skills?.join(', ') || null,
-      experience: data.experience?.join(', ') || null,
-      certifications: data.certifications?.join(', ') || null,
-      languages: data.languages?.join(', ') || null,
-    };
-  }
-  
-  // Wrapper for PDF parsing
-  async function cvParser(pdfPath) {
-    const buffer = fs.readFileSync(pdfPath);
-    const data = await pdfParse(buffer);
-    return parseCVSections(data.text);
-  }
-  
-  // Main Cover Letter Generator
-  exports.coverLetter = async (req, res) => {
+exports.coverLetter = async (req, res) => {
     try {
       const jobLoopId = req.params.id;
       const userId = req.user?.id;
   
+      console.log(`📨 Request received for cover letter | JobLoop ID: ${jobLoopId}, User ID: ${userId}`);
+  
+      // Fetch the job loop and user details (cv_path will be fetched from User table)
       const jobLoopData = await JobLoop.findOne({
         where: { id: jobLoopId, user_id: userId },
       });
   
       if (!jobLoopData) {
-        return res.status(404).json({ status: 404,message: 'Job loop not found', data: {} });
+        console.warn('⚠️ Job loop or user not found');
+        return res.status(404).json({
+          status: 404,
+          message: 'Job loop or user not found',
+          data: {}
+        });
       }
   
-      const user = await User.findOne({ where: { id: userId } });
-      const userFirstName = user?.first_name || '';
-      const userLastName = user?.last_name || '';
-      const userName = `${userFirstName} ${userLastName}`.trim() || 'Candidate';
-      const userEmail = user?.email || `user_${userId}@example.com`;
-      const userPhone = user?.phone || 'Not Provided';
-      const userLinkedIn = user?.linkedin_url || 'Not Provided';
-      const userAddress = user?.address || 'Not Provided';
+      // Fetch user details from the User table
+      const user = await User.findOne({
+        where: { id: userId },
+        attributes: ['first_name', 'last_name', 'email', 'cv_path'],
+      });
+  
+      if (!user) {
+        console.warn('⚠️ User not found');
+        return res.status(404).json({
+          status: 404,
+          message: 'User not found',
+          data: {}
+        });
+      }
+  
+      const { first_name, last_name, email, cv_path } = user;
+      const userName = `${first_name} ${last_name}`.trim() || 'Candidate';
       const currentDate = moment().format("MMMM D, YYYY");
-
   
-      // Get latest CV from uploads
-      const uploadsDir = path.join(__dirname, '../uploads');
-      const userCvFiles = fs.readdirSync(uploadsDir).filter(file => file.endsWith('.pdf'));
-      const latestCvFile = userCvFiles.sort((a, b) => fs.statSync(path.join(uploadsDir, b)).mtime - fs.statSync(path.join(uploadsDir, a)).mtime)[0];
+      const uploadsDir = path.join(__dirname, "../uploads");
+      console.log(uploadsDir)
   
-      let cvData = {};
-      if (latestCvFile) {
-        const cvPath = path.join(uploadsDir, latestCvFile);
-        cvData = await cvParser(cvPath);
+      // Construct the full path using the cv_path from the database
+      const cvFullPath = path.resolve(uploadsDir, cv_path);
+      console.log('📂 Full Local CV Path:', cvFullPath);
+  
+      // Check if the file exists
+      if (!fs.existsSync(cvFullPath)) {
+        console.error('⚠️ CV file not found at the specified path:', cvFullPath);
+        return res.status(400).json({
+          status: 400,
+          message: 'CV file not found. Please ensure the file is uploaded correctly.',
+          data: {}
+        });
       }
+  
+      let cvText = '';
+      try {
+        const buffer = fs.readFileSync(cvFullPath);
+        const parsed = await pdfParse(buffer);
+        cvText = parsed.text;
+      } catch (err) {
+        console.warn('⚠️ Failed to parse CV:', err.message);
+        return res.status(400).json({
+          status: 400,
+          message: 'Failed to read CV file. Please ensure it is a valid PDF.',
+          data: {}
+        });
+      }
+      console.log("cvtext", cvText)
   
       const { title, location, is_remote, experience, job_type } = jobLoopData;
       const safe = (val) => val || 'Not available';
@@ -316,60 +320,69 @@ function parseCVSections(text) {
         order: [['created_at', 'DESC']],
       });
   
-      let emailBodySnippet = template?.body || '';
+      let emailBodySnippet = template?.body || `I'm interested in the {{JOB_TITLE}} position. I believe my skills make me a great fit for the role.\n\nSincerely,\n{{USER_NAME}}`;
+  
       emailBodySnippet = emailBodySnippet
-        .replace(/{{USER_FIRSTNAME}}/g, userFirstName)
-        .replace(/{{USER_LASTNAME}}/g, userLastName)
+        .replace(/{{USER_FIRSTNAME}}/g, first_name)
+        .replace(/{{USER_LASTNAME}}/g, last_name)
         .replace(/{{USER_NAME}}/g, userName)
         .replace(/{{JOB_TITLE}}/g, title || '')
-        .replace(/{{SKILL_SET}}/g, safe(cvData.skills))
+        .replace(/{{SKILL_SET}}/g, 'See resume')
         .replace(/{{COMPANY_NAME}}/g, 'the company')
         .replace(/{{INTERVIEWER_NAME}}/g, 'Hiring Manager');
   
+      // ---- FINAL PROMPT FOR AI ----
       const prompt = `
-                Candidate Name: ${userName}
-                Candidate Email: ${userEmail}
-                Phone: ${userPhone}
-                LinkedIn: ${userLinkedIn}
-                Address: ${userAddress}
-                Date: ${currentDate}
-
-                Job Title: ${title}
-                Location: ${location}
-                Remote: ${is_remote ? 'Yes' : 'No'}
-                Experience: ${experience}
-                Job Type: ${job_type}
-
-                Candidate's CV:
-                Education: ${safe(cvData.education)}
-                Skills: ${safe(cvData.skills)}
-                Experience: ${safe(cvData.experience)}
-                Certifications: ${safe(cvData.certifications)}
-                Languages: ${safe(cvData.languages)}
-
-                Email Template Body Snippet: ${emailBodySnippet}
-
-                Tone: Professional
-                Length: Medium
-                `.trim();
-
+        Generate a professional and compelling cover letter based on the candidate and job details provided below. The tone should be confident, clear, and tailored to the role. Do not include generic salutations like "Dear Hiring Manager".
+  
+        ---
+  
+        **Candidate Details:**
+        - Name: ${userName}
+        - Email: ${email}
+        - Phone: ${phone}
+        - LinkedIn: ${linkedin_url}
+        - Address: ${address}
+  
+        **Resume (Raw Extracted Text):**
+        ${cvText.slice(0, 3000)} <!-- Limiting characters to avoid model overflow -->
+  
+        **Job Information:**
+        - Title: ${title}
+        - Location: ${location}
+        - Remote: ${is_remote ? 'Yes' : 'No'}
+        - Experience Required: ${experience}
+        - Job Type: ${job_type}
+  
+        **Instructions:**
+        - Begin with a personalized, engaging introduction
+        - Highlight relevant experience and skills based on resume
+        - Conclude with strong interest and call to action
+  
+        **Tone:** Professional  
+        **Length:** Medium  
+        **Date:** ${currentDate}
+      `.trim();
+  
+      console.log('\n🧠 Prompt sent to Gemini AI:\n', prompt);
   
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const coverLetter = response.text();
   
+      console.log('\n✍️ AI Response:\n', coverLetter);
+  
       jobLoopData.cover_letter = coverLetter;
       await jobLoopData.save();
   
-      console.log(coverLetter)
       return res.status(200).json({
         status: 200,
         data: coverLetter,
       });
   
     } catch (error) {
-      console.error('Error generating cover letter:', error);
+      console.error('❌ Error generating cover letter:', error);
       res.status(500).json({
         status: 500,
         message: 'Internal Server Error',
@@ -378,6 +391,8 @@ function parseCVSections(text) {
       });
     }
   };
+  
+  
 
 
   
