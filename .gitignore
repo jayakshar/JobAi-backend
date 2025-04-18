@@ -4,4 +4,4 @@ yarn.lock
 .env
 *.png
 /app/public/
-
+uploads
