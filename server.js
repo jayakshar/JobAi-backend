@@ -4,8 +4,17 @@ const app = express();
 require('dotenv').config();
 const cors = require("cors");
 app.use(cors({ origin: "*" }));
+const { db } = require("./app/models"); // Correct import for Sequelize
+
+// Sync the Sequelize models with the database
+const { startCron } = require("./app/cron/jobFetcher");
+module.exports = startCron;
 
 
+// Sync the Sequelize models with the database
+db.sequelize.sync().then(() => {
+    console.log("Database synced.");
+})
 // app.use(express.json());
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));

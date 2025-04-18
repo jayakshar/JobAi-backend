@@ -7,7 +7,7 @@ module.exports = function (app) {
     res.header(
       "Access-Control-Allow-Headers",
       "x-access-token, Origin, Content-Type, Accept"
-    );
+    );  
     next();
   });
 
@@ -17,4 +17,5 @@ module.exports = function (app) {
   app.get("/candidate-profile", verifyAuthToken, auth.getProfile);
   app.put("/candidateProfile-update", verifyAuthToken, auth.updateProfile);
   app.post("/upload-cv", verifyAuthToken, upload.single("cv"), auth.uploadCv);
+  app.get("/getJob", verifyAuthToken, auth.getJob);
 };

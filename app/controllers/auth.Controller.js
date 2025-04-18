@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const moment = require("moment");
 const { db } = require("../models");
 const User = db.user;
+const Job = db.job;
+const { Op } = require("sequelize");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -191,7 +193,7 @@ exports.getProfile = async (req, res) => {
         }
         return res.status(200).json({
             status: 200,
-            message: "User profile get  successfully",
+            message: "User profile get successfully",
             data: user,
         });
 
@@ -282,3 +284,53 @@ exports.uploadCv = async (req, res) => {
     }
 };
 
+exports.getJob = async (req, res) => {
+    const userId = req.user?.id || '';
+    console.log("userId", userId);
+    if (!userId) {
+        return res.status(400).json({ status: 400, message: "User ID is required.", data: {} });
+    }
+    try {
+        // const job = await Job.findByPk(userId);
+         const job = await Job.findAll({
+            order: [['created_at', 'DESC']],
+        });
+        
+        if (!job) {
+            return res.status(404).json({ status: 404, message: "Job not found", data: {} });
+        }
+        return res.status(200).json({
+            status: 200,
+            message: "Job List get successfully",
+            data: job,
+            total: job.length
+        });
+
+    } catch (error) {
+        console.error('Job retrieval error:', error);
+        return res.status(500).json({ status: 500, message: "Internal server error.", data: {} });
+    }
+};
+
+// exports.getJob = async (req, res) => {
+//     try {
+//         const { what = '', where = 'canada', page = 1 } = req.query;
+
+//         const response = await axios.get(
+//             `https://api.adzuna.com/v1/api/jobs/us/search/${page}`,
+//             {
+//                 params: {
+//                     app_id: APP_ID,
+//                     app_key: APP_KEY,
+//                     what,
+//                     where,
+//                 },
+//             }
+//         );
+
+//         res.status(200).json(response.data);
+//     } catch (error) {
+//         console.error('Adzuna API Error:', error.message);
+//         res.status(500).json({ message: 'Failed to fetch jobs' });
+//     }
+// };
