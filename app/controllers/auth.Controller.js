@@ -260,22 +260,26 @@ exports.uploadCv = async (req, res) => {
     if (!userId) {
         return res.status(400).json({ status: 400, message: "User ID is required.", data: {} });
     }
+
     try {
         if (!req.file) {
             return res.status(400).json({ message: "No file uploaded" });
         }
 
-        const filePath = `${req.file.filename}`;
         const originalName = req.file.originalname;
+        const savedFileName = req.file.filename; // like cv-1744977163584.pdf
 
         await User.update(
-            { cv_path: originalName },
+            {
+                cv_path: originalName,       // user-friendly name
+                cv_file: savedFileName,      // actual file stored on server
+            },
             { where: { id: userId } }
         );
 
         return res.status(200).json({
             message: "CV uploaded and saved successfully",
-            filePath,
+            filePath: savedFileName,
             originalName,
         });
     } catch (error) {

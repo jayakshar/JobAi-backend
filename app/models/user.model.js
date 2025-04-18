@@ -28,6 +28,9 @@ module.exports = (sequelize, Sequelize) => {
         cv_path: {
             type: Sequelize.STRING,
         },        
+        cv_file: {
+            type: Sequelize.STRING,
+        },        
         google_id: {
             type: Sequelize.STRING,
         },
