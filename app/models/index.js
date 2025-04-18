@@ -23,6 +23,7 @@ db.emailTemplate = require("../models/emailTemplate.model.js")(sequelize, Sequel
 db.loopEmail = require("../models/loopEmail.model.js")(sequelize, Sequelize);
 db.loopSettings = require("../models/loopSetting.model.js")(sequelize, Sequelize);
 db.cvScanner = require("../models/cv_Scanners.model.js")(sequelize, Sequelize);
+db.payments = require("../models/payment.model.js")(sequelize, Sequelize);
 
 db.user.hasMany(db.jobLoop, {
     foreignKey: "user_id",

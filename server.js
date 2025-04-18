@@ -3,6 +3,7 @@ const http = require('http');
 const app = express();
 require('dotenv').config();
 const cors = require("cors");
+const { APIChain } = require("langchain/chains");
 app.use(cors({ origin: "*" }));
 
 
@@ -37,6 +38,7 @@ require("./app/routes/jobLoops.routes")(apiRouter);
 require("./app/routes/loopEmail.routes")(apiRouter);
 require("./app/routes/loopSetting.routes")(apiRouter);
 require("./app/routes/cvScanner.routes")(apiRouter);
+require("./app/routes/payment.routes")(apiRouter)
 
 app.use("/api", apiRouter); // Mount the API router under the /api prefix
 

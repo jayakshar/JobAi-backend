@@ -14,4 +14,5 @@ module.exports = function (app) {
     app.post("/addJobLoop", verifyAuthToken, jobLoop.createJobLoopWithSettingsAndTemplate);
     app.get("/getAllJobLoop", verifyAuthToken, jobLoop.jobLoopList);
     app.get("/getJobLoop/:id", verifyAuthToken, jobLoop.jobLoopDetail);
+    app.get("/cover-letter/:id", verifyAuthToken, jobLoop.coverLetter);
 }    

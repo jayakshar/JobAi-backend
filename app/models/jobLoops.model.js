@@ -29,6 +29,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         defaultValue: 0
       },
+      cover_letter: {
+        type: Sequelize.STRING
+      },
       created_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
